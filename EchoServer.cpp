@@ -9,7 +9,7 @@
 //#pragma comment(lib, "ws2_32") //Para evitar errores LNK2019
 #include <iostream>
 #include <sys/socket.h>	//Para linux
-#include <sys\types.h>
+#include <sys\types.h>				// ERROR NO EXISTE
 //#include <winsock2.h>
 #include <unistd.h>	
 //#include <Windows.h>
@@ -17,7 +17,7 @@
 using namespace std;
 
 //WSADATA wsa_data;
-SOCKET listen_socket, cliente;
+int listen_socket, cliente;
 struct sockaddr_in clientinfo, servicio;
 int rtn;
 char buffer[256];
@@ -29,15 +29,15 @@ int main() {
 /*	if ((rtn = WSAStartup(MAKEWORD(2, 2), &wsa_data)) != 0) {
 		fprintf(stderr, "Error WSAStartup");
 		return -1;
-*/	}
-	//SOCKET
-	if ((listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET) {
+	}
+*/	//SOCKET
+	if ((listen_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET) {
 		fprintf(stderr, "Error en Socket");
 //		WSACleanup();
 		return -1;
 	}
 
-	servicio.sin_family = AF_INET;
+	servicio.sin_family = PF_INET;
 	servicio.sin_addr.S_un.S_addr = INADDR_ANY;
 	servicio.sin_port = htons(PUERTO);
 	//BIND
