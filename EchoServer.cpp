@@ -1,13 +1,18 @@
 // EchoServer.cpp: define el punto de entrada de la aplicación de consola.
 //
 
+/**
+ * Los WSA hay que borrarlos. En Linux darán error
+ *
+ */
+
 #pragma comment(lib, "ws2_32") //Para evitar errores LNK2019
 #include <iostream>
 //#include <sys/socket.h>	//Para linux
 #include <sys\types.h>
 #include <winsock2.h>
-//#include <unistd.h>		//Para linux
-#include <
+//#include <unistd.h>	
+#include <Windows.h>
 
 using namespace std;
 
@@ -57,11 +62,26 @@ int main() {
 		return -1;
 	}
 	//READ
-	if ((rtn = read(listen_socket, *buffer, sizeof(buffer)) < 0) {
-
+	if ((rtn = read(listen_socket, *buffer, sizeof(buffer))) < 0) {
+		fprintf(stderr, "Error al leer");
+		WSACleanup();
+		return -1;
 	}
-	//WRITE
-	//READ
+	while (true) {
+		//WRITE
+		if ((rtn = write(listen_socket, *buffer, sizeof(buffer))) < 0) {
+			fprintf(stderr, "Error al enviar");
+			WSACleanup();
+			return -1;
+		}
+		//READ
+		if ((rtn = read(listen_socket, *buffer, sizeof(buffer))) < 0) {
+			fprintf(stderr, "Error al leer");
+			WSACleanup();
+			return -1;
+		}
+	}
+	
 	return 0;
 }
 
