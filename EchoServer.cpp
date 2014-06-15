@@ -6,17 +6,17 @@
  *
  */
 
-#pragma comment(lib, "ws2_32") //Para evitar errores LNK2019
+//#pragma comment(lib, "ws2_32") //Para evitar errores LNK2019
 #include <iostream>
-//#include <sys/socket.h>	//Para linux
+#include <sys/socket.h>	//Para linux
 #include <sys\types.h>
-#include <winsock2.h>
-//#include <unistd.h>	
-#include <Windows.h>
+//#include <winsock2.h>
+#include <unistd.h>	
+//#include <Windows.h>
 
 using namespace std;
 
-WSADATA wsa_data;
+//WSADATA wsa_data;
 SOCKET listen_socket, cliente;
 struct sockaddr_in clientinfo, servicio;
 int rtn;
@@ -26,14 +26,14 @@ const int PUERTO = 5050;
 
 int main() {
 
-	if ((rtn = WSAStartup(MAKEWORD(2, 2), &wsa_data)) != 0) {
+/*	if ((rtn = WSAStartup(MAKEWORD(2, 2), &wsa_data)) != 0) {
 		fprintf(stderr, "Error WSAStartup");
 		return -1;
-	}
+*/	}
 	//SOCKET
 	if ((listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET) {
 		fprintf(stderr, "Error en Socket");
-		WSACleanup();
+//		WSACleanup();
 		return -1;
 	}
 
@@ -43,43 +43,44 @@ int main() {
 	//BIND
 	if ((rtn = bind(listen_socket, (struct sockaddr*) &servicio, (int) sizeof(servicio))) == SOCKET_ERROR) {
 		fprintf(stderr, "ERROR en bind");
-		WSACleanup();
+//		WSACleanup();
 		return -1;
 	}
 	//LISTEN
 	if (listen(listen_socket, SOMAXCONN) == SOCKET_ERROR) {
 		fprintf(stderr, "Error en listen");
 		closesocket(listen_socket);
-		WSACleanup();
+//		WSACleanup();
 		return -1;
 	}
-	system("ECHO Todo Correcto");
-	system("PAUSE > nul");
+//	system("ECHO Todo Correcto");
+//	system("PAUSE > nul");
 	//ACCEPT
 	if ((rtn = accept(listen_socket, (struct sockaddr*) &servicio, (int*) sizeof(servicio))) < 0) {
 		fprintf(stderr, "Error al aceptar");
-		WSACleanup();
+//		WSACleanup();
 		return -1;
 	}
 	//READ
 	if ((rtn = read(listen_socket, *buffer, sizeof(buffer))) < 0) {
 		fprintf(stderr, "Error al leer");
-		WSACleanup();
+//		WSACleanup();
 		return -1;
 	}
 	while (true) {
 		//WRITE
 		if ((rtn = write(listen_socket, *buffer, sizeof(buffer))) < 0) {
 			fprintf(stderr, "Error al enviar");
-			WSACleanup();
+//			WSACleanup();
 			return -1;
 		}
 		//READ
 		if ((rtn = read(listen_socket, *buffer, sizeof(buffer))) < 0) {
 			fprintf(stderr, "Error al leer");
-			WSACleanup();
+//			WSACleanup();
 			return -1;
 		}
+		fprintf(stderr, "Bucle");
 	}
 	
 	return 0;
