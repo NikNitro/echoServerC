@@ -26,3 +26,9 @@ targetver.h
 *.out
 *.app
 >>>>>>> dae20edaa953a6f7a28211cfe2b38695fbafb148
+Debug/EchoServer.tlog/CL.read.1.tlog
+Debug/EchoServer.tlog/CL.write.1.tlog
+Debug/EchoServer.tlog/EchoServer.lastbuildstate
+Debug/EchoServer.tlog/cl.command.1.tlog
+Debug/EchoServer.tlog/unsuccessfulbuild
+Debug/vc120.idb
