@@ -1,9 +1,21 @@
 // EchoServer.cpp: define el punto de entrada de la aplicación de consola.
 //
+/*ERRORES
+iknitrodeb@debian:~$ gcc '/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp'
+/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp: In function ‘int main()’:
+/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp:36: error: invalid conversion from ‘int*’ to ‘socklen_t*’
+/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp:36: error:   initializing argument 3 of ‘int accept(int, sockaddr*, socklen_t*)’
+/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp:38: error: invalid conversion from ‘char’ to ‘void*’
+/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp:38: error:   initializing argument 2 of ‘ssize_t read(int, void*, size_t)’
+/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp:41: error: invalid conversion from ‘char’ to ‘const void*’
+/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp:41: error:   initializing argument 2 of ‘ssize_t write(int, const void*, size_t)’
+/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp:43: error: invalid conversion from ‘char’ to ‘void*’
+/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp:43: error:   initializing argument 2 of ‘ssize_t read(int, void*, size_t)’
 
+
+*/
 #include <iostream>
-#include <sys/socket.h>	//Para linux
-//#include <sys\types.h>				// ERROR NO EXISTE
+#include <sys/socket.h>	
 #include <unistd.h>	
 
 //Otros includes:
