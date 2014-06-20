@@ -5,6 +5,8 @@
 #include<netinet/in.h> 
 #include<arpa/inet.h> 
 #include<netdb.h>
+#include<string.h>
+
 
 using namespace std;
 
@@ -25,13 +27,18 @@ int main() {
 
 	connect(sck, (struct sockaddr*) (&servicio), sizeof(servicio));
 	//Obtenemos la string a enviar, la separamos en caracteres y la enviamos.
-	fgets(data, 256, stdin);
-	int n = 0, m = 0;
-	n = strlen(data);
-	while (n > 0) {
-		m = write(sck, (*buffer), sizeof(buffer));
-		n = n - m;
+	while (true) {
+			cin>>buffer;
+			int n = 0, m = 0;
+			n = strlen(buffer);
+			while (n > 0) {
+				m = write(sck, buffer, strlen(buffer));
+				n = n - m;
+			}
+			recv(sck, buffer, 256, 0);
+			cout << buffer;
 	}
+	
 
 	return 0;
 }
