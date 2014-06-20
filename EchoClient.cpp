@@ -37,17 +37,18 @@ int main() {
 		cout << "bajo cin";
 		strcat(bufferOut, "\n");
 		cout << "bajo strcat";
-/*		int n = 0, m = 0;
-		n = strlen(buffer);
-		while (n > 0) {
-			m = */write(sck, bufferOut, strlen(bufferOut));
+		int n = -1
+		while (n == -1) {
+			n = write(sck, bufferOut, strlen(bufferOut));
+		}
 		if (!strcmp(bufferOut, "FIN")) {
 			noAcaba = false;
 		}
 		cout << "bajo write";
-//			n = n - m;
-//		}
-		recv(sck, bufferIn, 256, 0);
+		int m = -1;
+		while (m == -1) {
+			m = read(sck, bufferIn, 256);
+		}
 		cout << bufferIn << "\n";
 	}
 	cout << "Desconectado Correctamente.";

@@ -49,8 +49,13 @@ int main() {
 	//ACCEPT
 		cliente = accept(listen_socket, (struct sockaddr*) (&server), (socklen_t*) (sizeof(struct sockaddr_in)));
 	//READ
+		cout << "Al menos intenta leer \n";
 	//	rtn = read(listen_socket, (*buffer), sizeof(buffer));
-		recv(cliente, buffer, 256, 0);
+		int lee = -1;
+		while (lee == -1) {
+		lee = read(cliente, buffer, 256);
+		}
+		cout << "Al menos lee \n";
 		while (true) { //strcmp(buffer, "FIN\n")) {
 		//WRITE
 	//		rtn = write(listen_socket, (*buffer), sizeof(buffer));
@@ -59,7 +64,7 @@ int main() {
 			write(cliente, buffer, strlen(buffer));
 		//READ
 	//		rtn = read(listen_socket, (*buffer), sizeof(buffer));
-			 while((recv(cliente, buffer, 256, 0))< 0) ;
+			while ((read(cliente, buffer, strlen(buffer)))< 0);
 		}
 	}
 	
