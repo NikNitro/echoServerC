@@ -25,7 +25,7 @@ int main() {
 	servicio.sin_port = htons(5050);
 	inet_aton("127.0.0.1", &(servicio.sin_addr));
 	int i = -1;
-	while (i == -1) {
+	while (i < 0) {
 		i = connect(sck, (struct sockaddr*) (&servicio), sizeof(servicio));
 	}
 	//Obtenemos la string a enviar, la separamos en caracteres y la enviamos.
@@ -38,7 +38,7 @@ int main() {
 		strcat(bufferOut, "\n");
 		cout << "bajo strcat";
 		int n = -1
-		while (n == -1) {
+		while (n < 0) {
 			n = write(sck, bufferOut, strlen(bufferOut));
 		}
 		if (!strcmp(bufferOut, "FIN")) {

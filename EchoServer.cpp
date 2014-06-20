@@ -52,8 +52,8 @@ int main() {
 		cout << "Al menos intenta leer \n";
 	//	rtn = read(listen_socket, (*buffer), sizeof(buffer));
 		int lee = -1;
-		while (lee == -1) {
-		lee = read(cliente, buffer, 256);
+		while (lee < 0) {
+			lee = read(cliente, buffer, 256);
 		}
 		cout << "Al menos lee \n";
 		while (true) { //strcmp(buffer, "FIN\n")) {
