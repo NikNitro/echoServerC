@@ -45,20 +45,24 @@ int main() {
 	rtn = bind(listen_socket, (struct sockaddr*) (&server), (int) sizeof(server));
 	//LISTEN
 	listen(listen_socket, 1); //1 es el maximo de conexiones a la vez
-	//ACCEPT
-	cliente = accept(listen_socket, (struct sockaddr*) (&server), (socklen_t*) (sizeof(struct sockaddr_in)));// No estoy seguro de que sea socklen_t*. En las tansparencias pone int
-	//READ
-//	rtn = read(listen_socket, (*buffer), sizeof(buffer));
-	rtn = recv(cliente, buffer, 256, 0);
 	while (true) {
+	//ACCEPT
+		cliente = accept(listen_socket, (struct sockaddr*) (&server), (socklen_t*) (sizeof(struct sockaddr_in)));
+	//READ
+	//	rtn = read(listen_socket, (*buffer), sizeof(buffer));
+		recv(cliente, buffer, 256, 0);
+		while (true) { //strcmp(buffer, "FIN\n")) {
 		//WRITE
-//		rtn = write(listen_socket, (*buffer), sizeof(buffer));
-		write(cliente, buffer, strlen(buffer));
+	//		rtn = write(listen_socket, (*buffer), sizeof(buffer));
+			cout << "bucle";
+			strcat(buffer, "  Servidor");
+			write(cliente, buffer, strlen(buffer));
 		//READ
-//		rtn = read(listen_socket, (*buffer), sizeof(buffer));
-		rtn = recv(cliente, buffer, 256, 0);
-//		printf("Bucle");
+	//		rtn = read(listen_socket, (*buffer), sizeof(buffer));
+			 while((recv(cliente, buffer, 256, 0))< 0) ;
+		}
 	}
+	
 	
 	return 0;
 }
