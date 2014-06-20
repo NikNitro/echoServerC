@@ -22,11 +22,12 @@ iknitrodeb@debian:~$ gcc '/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp
 #include<netinet/in.h> 
 #include<arpa/inet.h> 
 #include<netdb.h>
+#include<string.h>
 
 using namespace std;
 
 int listen_socket, cliente;
-struct sockaddr_in clientinfo, servicio; 
+struct sockaddr_in clientinfo, server; 
 int rtn;
 char buffer[256];
 const int PUERTO = 5050;
@@ -35,25 +36,28 @@ const int PUERTO = 5050;
 int main() {
 
 	//SOCKET
-	listen_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);	//‘IPPROTO_TCP’ was not declared in this scope
+	listen_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);	
 
-	servicio.sin_family = PF_INET;
-	servicio.sin_addr.s_addr = INADDR_ANY;						//‘INADDR_ANY’ was not declared in this scope
-	servicio.sin_port = htons(PUERTO);							//'htons' was not declared in this scope
+	server.sin_family = PF_INET;
+	server.sin_addr.s_addr = INADDR_ANY;
+	server.sin_port = htons(PUERTO);
 	//BIND
-	rtn = bind(listen_socket, (struct sockaddr*) &servicio, (int) sizeof(servicio));
+	rtn = bind(listen_socket, (struct sockaddr*) (&server), (int) sizeof(server));
 	//LISTEN
-	listen(listen_socket, SOMAXCONN);
+	listen(listen_socket, 1); //1 es el maximo de conexiones a la vez
 	//ACCEPT
-	rtn = accept(listen_socket, (struct sockaddr*) &servicio, (int*) sizeof(servicio));
+	cliente = accept(listen_socket, (struct sockaddr*) (&server), (socklen_t*) (sizeof(struct sockaddr_in)));// No estoy seguro de que sea socklen_t*. En las tansparencias pone int
 	//READ
-	rtn = read(listen_socket, *buffer, sizeof(buffer));
+//	rtn = read(listen_socket, (*buffer), sizeof(buffer));
+	rtn = recv(cliente, buffer, 256, 0);
 	while (true) {
 		//WRITE
-		rtn = write(listen_socket, *buffer, sizeof(buffer));
+//		rtn = write(listen_socket, (*buffer), sizeof(buffer));
+		write(cliente, buffer, strlen(buffer));
 		//READ
-		rtn = read(listen_socket, *buffer, sizeof(buffer));
-		cout<<"Bucle";
+//		rtn = read(listen_socket, (*buffer), sizeof(buffer));
+		rtn = recv(cliente, buffer, 256, 0);
+//		printf("Bucle");
 	}
 	
 	return 0;
