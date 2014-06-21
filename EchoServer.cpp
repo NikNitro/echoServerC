@@ -36,8 +36,7 @@ int main(int argc, char *argv[]) {
 	int listen_socket, cliente, rtn;
 	struct sockaddr_in server, clientinfo;
 //	const int PUERTO = 5050;
-	const int PUERTO;
-	PUERTO = atoi(argv[0]);
+	const int PUERTO = atoi(argv[1]);
 
 	//SOCKET
 	listen_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);	
@@ -62,7 +61,8 @@ int main(int argc, char *argv[]) {
 	
 	//LISTEN
 	rtn = listen(listen_socket, 1); //1 es el maximo de conexiones a la vez
-	puts("Esperando conexiones entrantes");
+	puts("Esperando conexiones entrantes en el puerto ");
+	cout << server.sin_port;
 	/*if (rtn < 0) {
 		perror("Error en el listen");
 		return 1;

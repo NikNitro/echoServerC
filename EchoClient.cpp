@@ -30,10 +30,10 @@ int main(int argc, char *argv[]) {
 	}
 	puts("Socket creado");
 
-//	bzero(&servicio, sizeof(servicio));
 	server.sin_family = PF_INET;
 	server.sin_port = htons(PUERTO);
 	server.sin_addr.s_addr = inet_addr(argv[1]);
+//	server.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	//Conectando al servidor
 	if (connect(sck, (struct sockaddr*) (&server), sizeof(server)) < 0) {
