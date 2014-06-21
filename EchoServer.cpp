@@ -47,13 +47,19 @@ int main() {
 	listen(listen_socket, 1); //1 es el maximo de conexiones a la vez
 	while (true) {
 	//ACCEPT
-		cliente = accept(listen_socket, (struct sockaddr*) (&server), (socklen_t*) (sizeof(struct sockaddr_in)));
+	//	int c = sizeof(struct sockaddr_in);
+		int c = sizeof(server);
+		int cl = -1;
+		while (cl < 0) {
+			cliente = accept(listen_socket, (struct sockaddr*) (&server), (socklen_t*)&c);
+		}
 	//READ
 		cout << "Al menos intenta leer \n";
 	//	rtn = read(listen_socket, (*buffer), sizeof(buffer));
 		int lee = -1;
-		while (lee < 0) {
-			lee = read(cliente, buffer, 256);
+		while (lee <= 0) {
+			lee = read(cliente, buffer, strlen(buffer));
+			cout << buffer;
 		}
 		cout << "Al menos lee \n";
 		while (true) { //strcmp(buffer, "FIN\n")) {

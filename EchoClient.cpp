@@ -24,30 +24,31 @@ int main() {
 	servicio.sin_family = PF_INET;
 	servicio.sin_port = htons(5050);
 	inet_aton("127.0.0.1", &(servicio.sin_addr));
-	int i = -1;
-	while (i < 0) {
-		i = connect(sck, (struct sockaddr*) (&servicio), sizeof(servicio));
+	int soock = -1;
+	while (soock < 0) {
+		soock = connect(sck, (struct sockaddr*) (&servicio), sizeof(servicio));
 	}
 	//Obtenemos la string a enviar, la separamos en caracteres y la enviamos.
 	bool noAcaba = true;
 	while (noAcaba) {
 		cout << "Conectado al servidor " << inet_ntoa(servicio.sin_addr) << ":" << servicio.sin_port << ".\n";
 		cout << "Que desea enviar?\n";
-		cin>>bufferOut;
-		cout << "bajo cin";
-		strcat(bufferOut, "\n");
-		cout << "bajo strcat";
-		int n = -1
-		while (n < 0) {
-			n = write(sck, bufferOut, strlen(bufferOut));
-		}
+		cin >> bufferOut;
 		if (!strcmp(bufferOut, "FIN")) {
 			noAcaba = false;
 		}
-		cout << "bajo write";
+		cout << "bajo cin\n";
+		strcat(bufferOut, "\n");
+		cout << "bajo strcat\n";
+		int n = -1;
+		while (n < 0) {
+			n = write(soock, bufferOut, strlen(bufferOut));
+			cout << "has enviado " << n;
+		}
+		cout << "\nbajo write\n";
 		int m = -1;
 		while (m == -1) {
-			m = read(sck, bufferIn, 256);
+			m = read(sck, bufferIn, strlen(bufferIn));
 		}
 		cout << bufferIn << "\n";
 	}
