@@ -6,6 +6,7 @@
 #include<arpa/inet.h>  //inet_addr
 #include<netdb.h>
 #include<string.h>    //strlen
+#include <stdlib.h>		// para atoi
 
 
 using namespace std;
@@ -14,8 +15,12 @@ using namespace std;
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
 	int sck, rtn;
+//	const int PUERTO = 5050;
+	const int PUERTO = atoi(argv[argc-1]);
+	cout << argv[1] << ":" << PUERTO << "\n\n";
+
 	struct sockaddr_in server;
 	char bufferIn[2000], bufferOut[2000], bufferAux[2000];
 	//creamos socket
@@ -27,8 +32,8 @@ int main() {
 
 //	bzero(&servicio, sizeof(servicio));
 	server.sin_family = PF_INET;
-	server.sin_port = htons(5050);
-	server.sin_addr.s_addr = inet_addr("127.0.0.1");
+	server.sin_port = htons(PUERTO);
+	server.sin_addr.s_addr = inet_addr(argv[1]);
 
 	//Conectando al servidor
 	if (connect(sck, (struct sockaddr*) (&server), sizeof(server)) < 0) {

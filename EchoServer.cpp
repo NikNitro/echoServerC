@@ -18,6 +18,7 @@ iknitrodeb@debian:~$ gcc '/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp
 #include <sys/socket.h>	
 #include <unistd.h>		//write
 #include <stdio.h>		//para perror
+#include <stdlib.h>		// para atoi
 
 //Otros includes:
 #include<netinet/in.h> 
@@ -30,11 +31,13 @@ using namespace std;
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
 	int listen_socket, cliente, rtn;
 	struct sockaddr_in server, clientinfo;
-	const int PUERTO = 5050;
+//	const int PUERTO = 5050;
+	const int PUERTO;
+	PUERTO = atoi(argv[0]);
 
 	//SOCKET
 	listen_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);	
@@ -48,7 +51,7 @@ int main() {
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(PUERTO);
-
+	
 	//BIND
 	rtn = bind(listen_socket, (struct sockaddr*)&server, sizeof(server));
 	if (rtn < 0) {
@@ -81,20 +84,29 @@ int main() {
 	//READ
 	char buffer[2000], bufferAux[2000];
 //		cout << "Al menos intenta leer \n";
-		while((rtn = read(cliente, buffer, 2000)) > 0) {
-			cout <<"RECIBIDO: "<< buffer << "\n";
-			fflush(stdout);
-//			cout << "Al menos lee \n";
-//			strcat(buffer, "  Servidor");
-			fflush(stdout);
-			if (write(cliente, buffer, strlen(buffer)) < 0) {
-				perror("Envio fallido");
-				return 1;
+	bool noAcaba = true;
+		while((rtn = read(cliente, buffer, 2000)) > 0 && noAcaba) {
+			if (!strcmp(buffer, "FIN")) {
+				noAcaba = false;
 			}
-			cout << "enviado : " << buffer;
-			fflush(stdout);
-			//Reiniciarlo
-			strcpy(buffer, "\0");
+			else {
+				cout << "Conectado en el puerto " << server.sin_port << ". Esperando accion.\n";
+				cout <<"RECIBIDO: "<< buffer << "\n";
+				fflush(stdout);
+	//			cout << "Al menos lee \n";
+	//			strcat(buffer, "  Servidor");
+				fflush(stdout);
+				if (write(cliente, buffer, strlen(buffer)) < 0) {
+					perror("Envio fallido");
+					return 1;
+				}
+				cout << "enviado : " << buffer;
+				fflush(stdout);
+				//Reiniciarlo
+				strcpy(buffer, "\0");
+			}
+
+			
 		}
 		if (rtn == 0) {
 			puts("Cliente desconectado");
@@ -104,7 +116,7 @@ int main() {
 		{
 			perror("Error en Read");
 		}
-
+		cout << "Esperando otro cliente.\n \n";
 
 	}
 	
