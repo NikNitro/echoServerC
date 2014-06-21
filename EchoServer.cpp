@@ -16,62 +16,96 @@ iknitrodeb@debian:~$ gcc '/var/run/vmblock-fuse/blockdir/6ebce057/EchoServer.cpp
 */
 #include <iostream>
 #include <sys/socket.h>	
-#include <unistd.h>	
+#include <unistd.h>		//write
+#include <stdio.h>		//para perror
 
 //Otros includes:
 #include<netinet/in.h> 
-#include<arpa/inet.h> 
+#include<arpa/inet.h>	//inet_addr
 #include<netdb.h>
-#include<string.h>
+#include<string.h>		//strlen
 
 using namespace std;
 
-int listen_socket, cliente;
-struct sockaddr_in clientinfo, server; 
-int rtn;
-char buffer[256];
-const int PUERTO = 5050;
+
 
 
 int main() {
 
+	int listen_socket, cliente, rtn;
+	struct sockaddr_in server, clientinfo;
+	const int PUERTO = 5050;
+
 	//SOCKET
 	listen_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);	
+	if (listen_socket == -1) {
+		perror("No se puede crear el socket");
+		return 1;
+	}
+	cout << "Socket creado\n";
 
-	server.sin_family = PF_INET;
+	//preparar la estructura sockaddr_in
+	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(PUERTO);
+
 	//BIND
-	rtn = bind(listen_socket, (struct sockaddr*) (&server), (int) sizeof(server));
+	rtn = bind(listen_socket, (struct sockaddr*)&server, sizeof(server));
+	if (rtn < 0) {
+		perror("Error en el bind");
+		return 1;
+	}
+	puts("Bind hecho");
+	
 	//LISTEN
-	listen(listen_socket, 1); //1 es el maximo de conexiones a la vez
+	rtn = listen(listen_socket, 1); //1 es el maximo de conexiones a la vez
+	puts("Esperando conexiones entrantes");
+	/*if (rtn < 0) {
+		perror("Error en el listen");
+		return 1;
+	}*/
+
 	while (true) {
+
+	sockaddr client;
+	socklen_t c = sizeof(client);
 	//ACCEPT
-	//	int c = sizeof(struct sockaddr_in);
-		int c = sizeof(server);
-		int cl = -1;
-		while (cl < 0) {
-			cliente = accept(listen_socket, (struct sockaddr*) (&server), (socklen_t*)&c);
-		}
+	cliente = accept(listen_socket, &client, &c);
+	if (cliente < 0) {
+		perror("Error en el accept");
+		return 1;
+	}
+	cout << "Conexion aceptada en el puerto " << server.sin_port << "\n";
+	fflush(stdout);
+
 	//READ
-		cout << "Al menos intenta leer \n";
-	//	rtn = read(listen_socket, (*buffer), sizeof(buffer));
-		int lee = -1;
-		while (lee <= 0) {
-			lee = read(cliente, buffer, strlen(buffer));
-			cout << buffer;
+	char buffer[2000], bufferAux[2000];
+//		cout << "Al menos intenta leer \n";
+		while((rtn = read(cliente, buffer, 2000)) > 0) {
+			cout <<"RECIBIDO: "<< buffer << "\n";
+			fflush(stdout);
+//			cout << "Al menos lee \n";
+//			strcat(buffer, "  Servidor");
+			fflush(stdout);
+			if (write(cliente, buffer, strlen(buffer)) < 0) {
+				perror("Envio fallido");
+				return 1;
+			}
+			cout << "enviado : " << buffer;
+			fflush(stdout);
+			//Reiniciarlo
+			strcpy(buffer, "\0");
 		}
-		cout << "Al menos lee \n";
-		while (true) { //strcmp(buffer, "FIN\n")) {
-		//WRITE
-	//		rtn = write(listen_socket, (*buffer), sizeof(buffer));
-			cout << "bucle";
-			strcat(buffer, "  Servidor");
-			write(cliente, buffer, strlen(buffer));
-		//READ
-	//		rtn = read(listen_socket, (*buffer), sizeof(buffer));
-			while ((read(cliente, buffer, strlen(buffer)))< 0);
+		if (rtn == 0) {
+			puts("Cliente desconectado");
+			fflush(stdout);
 		}
+		else if (rtn == -1)
+		{
+			perror("Error en Read");
+		}
+
+
 	}
 	
 	

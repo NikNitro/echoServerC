@@ -1,56 +1,68 @@
 
 #include <iostream>
-#include <sys/socket.h>
-
+#include <sys/socket.h>    //socket
+#include<stdio.h> //printf
 #include<netinet/in.h> 
-#include<arpa/inet.h> 
+#include<arpa/inet.h>  //inet_addr
 #include<netdb.h>
-#include<string.h>
+#include<string.h>    //strlen
 
 
 using namespace std;
 
 
-int sck;
-char bufferIn[256], bufferOut[256];
 
 
 
 int main() {
+	int sck, rtn;
+	struct sockaddr_in server;
+	char bufferIn[2000], bufferOut[2000], bufferAux[2000];
+	//creamos socket
 	sck = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-	struct sockaddr_in servicio;
-	bzero(&servicio, sizeof(servicio));
-	servicio.sin_family = PF_INET;
-	servicio.sin_port = htons(5050);
-	inet_aton("127.0.0.1", &(servicio.sin_addr));
-	int soock = -1;
-	while (soock < 0) {
-		soock = connect(sck, (struct sockaddr*) (&servicio), sizeof(servicio));
+	if (sck == -1) {
+		cout << "No se puede crear el socket";
 	}
+	puts("Socket creado");
+
+//	bzero(&servicio, sizeof(servicio));
+	server.sin_family = PF_INET;
+	server.sin_port = htons(5050);
+	server.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+	//Conectando al servidor
+	if (connect(sck, (struct sockaddr*) (&server), sizeof(server)) < 0) {
+		perror("Conexion fallida. error");
+		return 1;
+	}
+	puts("Conectado\n");
+	
 	//Obtenemos la string a enviar, la separamos en caracteres y la enviamos.
 	bool noAcaba = true;
 	while (noAcaba) {
-		cout << "Conectado al servidor " << inet_ntoa(servicio.sin_addr) << ":" << servicio.sin_port << ".\n";
+		cout << "Conectado al servidor " << inet_ntoa(server.sin_addr) << ":" << server.sin_port << ".\n";
 		cout << "Que desea enviar?\n";
-		cin >> bufferOut;
+		scanf("%s", bufferOut);
 		if (!strcmp(bufferOut, "FIN")) {
 			noAcaba = false;
 		}
-		cout << "bajo cin\n";
 		strcat(bufferOut, "\n");
-		cout << "bajo strcat\n";
 		int n = -1;
-		while (n < 0) {
-			n = write(soock, bufferOut, strlen(bufferOut));
-			cout << "has enviado " << n;
+
+		if (write(sck, bufferOut, strlen(bufferOut)) < 0) {
+			puts("envio fallido");
+			return 1;
 		}
-		cout << "\nbajo write\n";
-		int m = -1;
-		while (m == -1) {
-			m = read(sck, bufferIn, strlen(bufferIn));
+		rtn = read(sck, bufferIn, 2000);
+			
+		cout << "\nDevuelto " ; 
+		for (int i = 0; i < strlen(bufferOut); i++) {
+			cout << bufferIn[i];
 		}
-		cout << bufferIn << "\n";
+		cout << "\n";
+		strcpy(bufferIn, "\0");
+		strcpy(bufferOut, "\0");
+
 	}
 	cout << "Desconectado Correctamente.";
 	
