@@ -61,8 +61,7 @@ int main(int argc, char *argv[]) {
 	
 	//LISTEN
 	rtn = listen(listen_socket, 1); //1 es el maximo de conexiones a la vez
-	puts("Esperando conexiones entrantes en el puerto ");
-	cout << server.sin_port;
+	cout << "Esperando conexiones entrantes en el puerto "<< PUERTO << "\n";
 	/*if (rtn < 0) {
 		perror("Error en el listen");
 		return 1;
@@ -78,29 +77,32 @@ int main(int argc, char *argv[]) {
 		perror("Error en el accept");
 		return 1;
 	}
-	cout << "Conexion aceptada en el puerto " << server.sin_port << "\n";
+	cout << "Conexion aceptada en el puerto " << PUERTO << "\n";
 	fflush(stdout);
 
 	//READ
 	char buffer[2000], bufferAux[2000];
 //		cout << "Al menos intenta leer \n";
 	bool noAcaba = true;
-		while((rtn = read(cliente, buffer, 2000)) > 0 && noAcaba) {
+	while ((rtn = read(cliente, buffer, 2000)) > 0 && noAcaba) {
+			cout << "Conectado en el puerto " << PUERTO << ". Esperando accion.\n";
+//			cout << "RECIBIDO: " << buffer << "\n";
 			if (!strcmp(buffer, "FIN")) {
 				noAcaba = false;
 			}
 			else {
-				cout << "Conectado en el puerto " << server.sin_port << ". Esperando accion.\n";
-				cout <<"RECIBIDO: "<< buffer << "\n";
 				fflush(stdout);
 	//			cout << "Al menos lee \n";
 	//			strcat(buffer, "  Servidor");
+				for (int i = 0; i < rtn; i++) {
+					buffer[i] = toupper(buffer[i]);
+				}
 				fflush(stdout);
 				if (write(cliente, buffer, strlen(buffer)) < 0) {
 					perror("Envio fallido");
 					return 1;
 				}
-				cout << "enviado : " << buffer;
+//				cout << "ENVIADO: " << buffer;
 				fflush(stdout);
 				//Reiniciarlo
 				strcpy(buffer, "\0");
@@ -109,7 +111,8 @@ int main(int argc, char *argv[]) {
 			
 		}
 		if (rtn == 0) {
-			puts("Cliente desconectado");
+			cout << "Recibido FIN. \nCerrando la conexión con el cliente\n";
+			cout<<"Cliente desconectado. Esperando conexion en el puerto "<< PUERTO << "\n";
 			fflush(stdout);
 		}
 		else if (rtn == -1)

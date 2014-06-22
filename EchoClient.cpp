@@ -45,31 +45,36 @@ int main(int argc, char *argv[]) {
 	//Obtenemos la string a enviar, la separamos en caracteres y la enviamos.
 	bool noAcaba = true;
 	while (noAcaba) {
-		cout << "Conectado al servidor " << inet_ntoa(server.sin_addr) << ":" << server.sin_port << ".\n";
+		cout << "Conectado al servidor " << inet_ntoa(server.sin_addr) << ":" << PUERTO << ".\n";
 		cout << "Que desea enviar?\n";
 		scanf("%s", bufferOut);
 		if (!strcmp(bufferOut, "FIN")) {
-			noAcaba = false;
-		}
-		strcat(bufferOut, "\n");
-		int n = -1;
+			noAcaba = false; 
+			if (write(sck, bufferOut, strlen(bufferOut)) < 0) {
+				puts("envio fallido");
+				return 1;
+			}
+		} else {
+			strcat(bufferOut, "\n");
 
-		if (write(sck, bufferOut, strlen(bufferOut)) < 0) {
-			puts("envio fallido");
-			return 1;
-		}
-		rtn = read(sck, bufferIn, 2000);
+			if (write(sck, bufferOut, strlen(bufferOut)) < 0) {
+				puts("envio fallido");
+				return 1;
+			}
+			rtn = read(sck, bufferIn, 2000);
 			
-		cout << "\nDevuelto " ; 
-		for (int i = 0; i < strlen(bufferOut); i++) {
-			cout << bufferIn[i];
+			cout << "\nDevuelto " ; 
+			for (int i = 0; i < strlen(bufferOut); i++) {
+				cout << bufferIn[i];
+			}
+			cout << "\n";
+			strcpy(bufferIn, "\0");
+			strcpy(bufferOut, "\0");
 		}
-		cout << "\n";
-		strcpy(bufferIn, "\0");
-		strcpy(bufferOut, "\0");
+		
 
 	}
-	cout << "Desconectado Correctamente.";
+	cout << "Desconectado Correctamente.\n";
 	
 
 	return 0;
